@@ -6,6 +6,7 @@ import { wait } from './wait'
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 export async function run(): Promise<void> {
+  // https://github.com/DataDog/integrations-extras/blob/master/lighthouse/datadog_checks/lighthouse/lighthouse.py
   try {
     const ms: string = core.getInput('milliseconds')
 
