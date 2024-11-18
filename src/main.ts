@@ -1,5 +1,6 @@
-import * as core from '@actions/core'
-import { wait } from './wait'
+import * as core from '@actions/core';
+import { glob } from 'glob';
+import { submitdMetrics } from './lighthouse';
 
 /**
  * The main function for the action.
@@ -8,20 +9,26 @@ import { wait } from './wait'
 export async function run(): Promise<void> {
   // https://github.com/DataDog/integrations-extras/blob/master/lighthouse/datadog_checks/lighthouse/lighthouse.py
   try {
-    const ms: string = core.getInput('milliseconds')
-
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
-
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    const data = await retrieveData();
+    data.forEach((metrics) => {
+      if (metrics)submitdMetrics(metrics, []);
+    });
   } catch (error) {
     // Fail the workflow run if an error occurs
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) core.setFailed(error.message);
   }
+}
+
+async function retrieveData():Promise<any[]> {
+  const jsons = await glob('./.lighthouseci/lhr*.json');
+
+  return jsons.map((json) => {
+    let data = null;
+    try {
+      data = JSON.parse(json);
+    } catch {
+      core.warning('lighthouse response JSON different than expected');
+    }
+    return data;
+  });
 }
