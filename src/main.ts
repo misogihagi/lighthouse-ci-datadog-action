@@ -9,9 +9,10 @@ import { submitdMetrics } from './lighthouse';
 export async function run(): Promise<void> {
   // https://github.com/DataDog/integrations-extras/blob/master/lighthouse/datadog_checks/lighthouse/lighthouse.py
   try {
+    const apiKey: string = core.getInput('dd-api-key');
     const data = await retrieveData();
     data.forEach((metrics) => {
-      if (metrics)submitdMetrics(metrics, []);
+      if (metrics)submitdMetrics({ data: metrics, tags: [], apiKey });
     });
   } catch (error) {
     // Fail the workflow run if an error occurs

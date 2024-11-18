@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import { client, v2 } from '@datadog/datadog-api-client';
 
-const METRIC_TYPE = 3 as const;
+const METRIC_TYPE = 3;
 const EXPECTED_RESPONSE_CODE = 'NO_ERROR';
 
 function getNumericAuditValue(data:any, attribute:string) {
@@ -83,8 +83,13 @@ export function generateSeries(data:any, tags?:string[]) {
   return series;
 }
 
-export function submitdMetrics(data:any, tags?:string[]):void {
-  const configuration = client.createConfiguration();
+export function submitdMetrics({ data, tags, apiKey }:{ data:any, tags?:string[], apiKey?:string }):void {
+  const configuration = client.createConfiguration(apiKey ? {
+    authMethods: {
+      apiKeyAuth: apiKey,
+    },
+  } : {});
+
   const apiInstance = new v2.MetricsApi(configuration);
 
   const params: v2.MetricsApiSubmitMetricsRequest = {
