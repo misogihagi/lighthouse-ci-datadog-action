@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import { client, v2 } from '@datadog/datadog-api-client';
 
-const METRIC_TYPE = 3;
+const METRIC_TYPE = 3 as const;
 const EXPECTED_RESPONSE_CODE = 'NO_ERROR';
 
 function getNumericAuditValue(data:any, attribute:string) {
@@ -18,50 +18,50 @@ function getNumericAuditValue(data:any, attribute:string) {
 }
 
 export function generateSeries(data:any, tags?:string[]) {
-  const score_accessibility = Math.round((data.categories?.accessibility?.score || 0) * 100);
-  const score_best_practices = Math.round((data.categories?.['best-practices']?.score || 0) * 100);
-  const score_performance = Math.round((data.categories?.performance?.score || 0) * 100);
-  const score_pwa = Math.round((data.categories?.pwa?.score || 0) * 100);
-  const score_seo = Math.round((data.categories?.seo?.score || 0) * 100);
-  const largest_contentful_paint = getNumericAuditValue(data, 'largest-contentful-paint');
-  const first_contentful_paint = getNumericAuditValue(data, 'first-contentful-paint');
-  const cumulative_layout_shift = getNumericAuditValue(data, 'cumulative-layout-shift');
-  const max_potential_fid = getNumericAuditValue(data, 'max-potential-fid');
-  const time_to_interactive = getNumericAuditValue(data, 'interactive');
-  const mainthread_work_breakdown = getNumericAuditValue(data, 'mainthread-work-breakdown');
-  const unused_javascript = getNumericAuditValue(data, 'unused-javascript');
-  const unused_css_rules = getNumericAuditValue(data, 'unused-css-rules');
-  const modern_image_formats = getNumericAuditValue(data, 'modern-image-formats');
-  const uses_optimized_images = getNumericAuditValue(data, 'uses-optimized-images');
-  const render_blocking_resources = getNumericAuditValue(data, 'render-blocking-resources');
-  const bootup_time = getNumericAuditValue(data, 'bootup-time');
-  const server_response_time = getNumericAuditValue(data, 'server-response-time');
-  const speed_index = getNumericAuditValue(data, 'speed-index');
-  const dom_size = getNumericAuditValue(data, 'dom-size');
-  const total_blocking_time = getNumericAuditValue(data, 'total-blocking-time');
+  const scoreAccessibility = Math.round((data.categories?.accessibility?.score || 0) * 100);
+  const scoreBestPractices = Math.round((data.categories?.['best-practices']?.score || 0) * 100);
+  const scorePerformance = Math.round((data.categories?.performance?.score || 0) * 100);
+  const scorePwa = Math.round((data.categories?.pwa?.score || 0) * 100);
+  const scoreSeo = Math.round((data.categories?.seo?.score || 0) * 100);
+  const largestContentfulPaint = getNumericAuditValue(data, 'largest-contentful-paint');
+  const firstContentfulPaint = getNumericAuditValue(data, 'first-contentful-paint');
+  const cumulativeLayoutShift = getNumericAuditValue(data, 'cumulative-layout-shift');
+  const maxPotentialFid = getNumericAuditValue(data, 'max-potential-fid');
+  const timeToInteractive = getNumericAuditValue(data, 'interactive');
+  const mainthreadWorkBreakdown = getNumericAuditValue(data, 'mainthread-work-breakdown');
+  const unusedJavascript = getNumericAuditValue(data, 'unused-javascript');
+  const unusedCssRules = getNumericAuditValue(data, 'unused-css-rules');
+  const modernImageFormats = getNumericAuditValue(data, 'modern-image-formats');
+  const usesOptimizedImages = getNumericAuditValue(data, 'uses-optimized-images');
+  const renderBlockingResources = getNumericAuditValue(data, 'render-blocking-resources');
+  const bootupTime = getNumericAuditValue(data, 'bootup-time');
+  const serverResponseTime = getNumericAuditValue(data, 'server-response-time');
+  const speedIndex = getNumericAuditValue(data, 'speed-index');
+  const domSize = getNumericAuditValue(data, 'dom-size');
+  const totalBlockingTime = getNumericAuditValue(data, 'total-blocking-time');
 
   const dict = {
-    'lighthouse.accessibility': score_accessibility,
-    'lighthouse.best_practices': score_best_practices,
-    'lighthouse.performance': score_performance,
-    'lighthouse.pwa': score_pwa,
-    'lighthouse.seo': score_seo,
-    'lighthouse.largest_contentful_paint': largest_contentful_paint,
-    'lighthouse.first_contentful_paint': first_contentful_paint,
-    'lighthouse.cumulative_layout_shift': cumulative_layout_shift,
-    'lighthouse.max_potential_fid': max_potential_fid,
-    'lighthouse.time_to_interactive': time_to_interactive,
-    'lighthouse.mainthread_work_breakdown': mainthread_work_breakdown,
-    'lighthouse.unused_javascript': unused_javascript,
-    'lighthouse.unused_css_rules': unused_css_rules,
-    'lighthouse.modern_image_formats': modern_image_formats,
-    'lighthouse.uses_optimized_images': uses_optimized_images,
-    'lighthouse.render_blocking_resources': render_blocking_resources,
-    'lighthouse.bootup_time': bootup_time,
-    'lighthouse.server_response_time': server_response_time,
-    'lighthouse.speed_index': speed_index,
-    'lighthouse.dom_size': dom_size,
-    'lighthouse.total_blocking_time': total_blocking_time,
+    'lighthouse.accessibility': scoreAccessibility,
+    'lighthouse.bestPractices': scoreBestPractices,
+    'lighthouse.performance': scorePerformance,
+    'lighthouse.pwa': scorePwa,
+    'lighthouse.seo': scoreSeo,
+    'lighthouse.largestContentfulPaint': largestContentfulPaint,
+    'lighthouse.firstContentfulPaint': firstContentfulPaint,
+    'lighthouse.cumulativeLayoutShift': cumulativeLayoutShift,
+    'lighthouse.maxPotentialFid': maxPotentialFid,
+    'lighthouse.timeToInteractive': timeToInteractive,
+    'lighthouse.mainthreadWorkBreakdown': mainthreadWorkBreakdown,
+    'lighthouse.unusedJavascript': unusedJavascript,
+    'lighthouse.unusedCssRules': unusedCssRules,
+    'lighthouse.modernImageFormats': modernImageFormats,
+    'lighthouse.usesOptimizedImages': usesOptimizedImages,
+    'lighthouse.renderBlockingResources': renderBlockingResources,
+    'lighthouse.bootupTime': bootupTime,
+    'lighthouse.serverResponseTime': serverResponseTime,
+    'lighthouse.speedIndex': speedIndex,
+    'lighthouse.domSize': domSize,
+    'lighthouse.totalBlockingTime': totalBlockingTime,
   };
 
   const requestedUrl = data?.requestedUrl;
