@@ -14,7 +14,6 @@ inputs:
     required: false
 
 # Define your outputs here.
-outputs:
 
 runs:
   using: node22
