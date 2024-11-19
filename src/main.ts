@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import { glob } from 'glob';
+import { readFileSync } from 'fs';
 import { submitdMetrics } from './lighthouse';
 
 /**
@@ -26,9 +27,9 @@ async function retrieveData():Promise<any[]> {
   return jsons.map((json) => {
     let data = null;
     try {
-      data = JSON.parse(json);
+      data = JSON.parse(readFileSync(json).toString());
     } catch {
-      core.warning('lighthouse response JSON different than expected');
+      core.warning('lighthouse response JSON different than expected: '+json);
     }
     return data;
   });
