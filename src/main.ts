@@ -23,9 +23,9 @@ export async function run(): Promise<void> {
 
 async function retrieveData():Promise<any[]> {
   const jsons = await glob('./.lighthouseci/lhr*.json');
-  console.log(jsons)
 
   return jsons.map((json) => {
+    console.log(json)
     let data = null;
     try {
       data = JSON.parse(readFileSync(json).toString());
