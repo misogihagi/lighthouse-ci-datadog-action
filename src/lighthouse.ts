@@ -3,7 +3,7 @@ import { client, v2 } from '@datadog/datadog-api-client';
 import { nonNullable } from './utils';
 import type { LHRJSONSchemaType } from './schema';
 
-const METRIC_TYPE = 3 as const;
+const METRIC_TYPE:Readonly<3> = 3;
 const EXPECTED_RESPONSE_CODE = 'NO_ERROR';
 
 function getNumericAuditValue(data:LHRJSONSchemaType, attribute:keyof LHRJSONSchemaType['audits']):number | null {
