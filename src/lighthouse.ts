@@ -86,11 +86,11 @@ export function generateSeries(data:LHRJSONSchemaType, tags?:string[]):v2.Metric
   return series;
 }
 
-export function submitdMetrics(
+export async function submitdMetrics(
   { data, tags, apiKey }
   :
   { data:LHRJSONSchemaType, tags?:string[], apiKey?:string },
-):void {
+):Promise<void> {
   const configuration = client.createConfiguration(apiKey ? {
     authMethods: {
       apiKeyAuth: apiKey,
@@ -105,7 +105,7 @@ export function submitdMetrics(
     },
   };
 
-  apiInstance
+  return apiInstance
     .submitMetrics(params)
     .then((payloadData: v2.IntakePayloadAccepted) => {
       core.debug(
