@@ -2,6 +2,21 @@ import * as core from '@actions/core';
 import { glob } from 'glob';
 import { readFileSync } from 'fs';
 import { submitdMetrics } from './lighthouse';
+import { LHRJSONSchema, type LHRJSONSchemaType } from './schema';
+
+async function retrieveData():Promise<(LHRJSONSchemaType | null)[]> {
+  const jsons = await glob('./.lighthouseci/lhr*.json');
+
+  return jsons.map((json) => {
+    let data = null;
+    try {
+      data = LHRJSONSchema.parse(readFileSync(json).toString());
+    } catch {
+      core.warning(`lighthouse response JSON different than expected: ${json}`);
+    }
+    return data;
+  });
+}
 
 /**
  * The main function for the action.
@@ -21,17 +36,4 @@ export async function run(): Promise<void> {
   }
 }
 
-async function retrieveData():Promise<any[]> {
-  const jsons = await glob('./.lighthouseci/lhr*.json');
-
-  return jsons.map((json) => {
-    console.log(json)
-    let data = null;
-    try {
-      data = JSON.parse(readFileSync(json).toString());
-    } catch {
-      core.warning('lighthouse response JSON different than expected: '+json);
-    }
-    return data;
-  });
-}
+export default run;

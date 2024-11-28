@@ -70,7 +70,8 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@datadog/datadog-api-client": "^1.30.0",
-    "glob": "^11.0.0"
+    "glob": "^11.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@github/local-action": "^2.2.0",

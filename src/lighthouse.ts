@@ -1,12 +1,14 @@
 import * as core from '@actions/core';
 import { client, v2 } from '@datadog/datadog-api-client';
+import { nonNullable } from './utils';
+import type { LHRJSONSchemaType } from './schema';
 
 const METRIC_TYPE = 3 as const;
 const EXPECTED_RESPONSE_CODE = 'NO_ERROR';
 
-function getNumericAuditValue(data:any, attribute:string) {
+function getNumericAuditValue(data:LHRJSONSchemaType, attribute:keyof LHRJSONSchemaType['audits']):number | null {
   const code = data?.runtimeError?.code;
-  if (code == EXPECTED_RESPONSE_CODE) {
+  if (code === EXPECTED_RESPONSE_CODE) {
     const errCode = data?.runtimeError?.code;
     const errMsg = data?.runtimeError?.message;
     core.warning(
@@ -14,10 +16,10 @@ function getNumericAuditValue(data:any, attribute:string) {
     );
     return null;
   }
-  return data.audits[attribute].numericValue;
+  return data?.audits?.[attribute]?.numericValue || null;
 }
 
-export function generateSeries(data:any, tags?:string[]) {
+export function generateSeries(data:LHRJSONSchemaType, tags?:string[]):v2.MetricSeries[] {
   const scoreAccessibility = Math.round((data.categories?.accessibility?.score || 0) * 100);
   const scoreBestPractices = Math.round((data.categories?.['best-practices']?.score || 0) * 100);
   const scorePerformance = Math.round((data.categories?.performance?.score || 0) * 100);
@@ -40,7 +42,7 @@ export function generateSeries(data:any, tags?:string[]) {
   const domSize = getNumericAuditValue(data, 'dom-size');
   const totalBlockingTime = getNumericAuditValue(data, 'total-blocking-time');
 
-  const dict = {
+  const dict:Record<string, number | null> = {
     'lighthouse.accessibility': scoreAccessibility,
     'lighthouse.bestPractices': scoreBestPractices,
     'lighthouse.performance': scorePerformance,
@@ -67,23 +69,28 @@ export function generateSeries(data:any, tags?:string[]) {
   const requestedUrl = data?.requestedUrl;
   const defaultTag = `url:${requestedUrl}`;
 
-  const series = Object.entries(dict).map(([key, value]) => ({
-    metric: key,
-    type: METRIC_TYPE,
-    points: [
-      {
-        timestamp: Math.round(new Date().getTime() / 1000),
-        value,
-      },
-    ],
-    tags: tags ? [defaultTag, ...tags] : [defaultTag],
-  }
-  ));
+  const series = Object.entries(dict).map(([key, value]) => (
+    value ? {
+      metric: key,
+      type: METRIC_TYPE,
+      points: [
+        {
+          timestamp: Math.round(new Date().getTime() / 1000),
+          value,
+        },
+      ],
+      tags: tags ? [defaultTag, ...tags] : [defaultTag],
+    } : null
+  )).filter(nonNullable);
 
   return series;
 }
 
-export function submitdMetrics({ data, tags, apiKey }:{ data:any, tags?:string[], apiKey?:string }):void {
+export function submitdMetrics(
+  { data, tags, apiKey }
+  :
+  { data:LHRJSONSchemaType, tags?:string[], apiKey?:string },
+):void {
   const configuration = client.createConfiguration(apiKey ? {
     authMethods: {
       apiKeyAuth: apiKey,
@@ -100,10 +107,10 @@ export function submitdMetrics({ data, tags, apiKey }:{ data:any, tags?:string[]
 
   apiInstance
     .submitMetrics(params)
-    .then((data: v2.IntakePayloadAccepted) => {
+    .then((payloadData: v2.IntakePayloadAccepted) => {
       core.debug(
-        `API called successfully. Returned data: ${JSON.stringify(data)}`,
+        `API called successfully. Returned data: ${JSON.stringify(payloadData)}`,
       );
     })
-    .catch((error: any) => core.error(error));
+    .catch(core.error);
 }
