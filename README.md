@@ -34,7 +34,7 @@ jobs:
 
 ## Inputs
 
-#### `dd-api-key`
+### `dd-api-key`
 
 API key required to access the Datadog API. The environment variable DD_API_KEY
 can also be used. If both are specified, the value specified below with will be
