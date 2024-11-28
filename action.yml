@@ -10,7 +10,8 @@ branding:
 # Define your inputs here.
 inputs:
   dd-api-key:
-    description: 'Your Datadog API key. environment value DD_API_KEY is also available.'
+    description:
+      'Your Datadog API key. environment value DD_API_KEY is also available.'
     required: false
 
 # Define your outputs here.
