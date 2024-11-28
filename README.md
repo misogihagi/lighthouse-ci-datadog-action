@@ -29,24 +29,22 @@ jobs:
       - name: Submit Lighthouse metrics
         uses: misogihagi/lighthouse-ci-datadog-action@beta
         with:
-          dd-api-key: ${{secrets.DD_API_KEY}}         
+          dd-api-key: ${{secrets.DD_API_KEY}}
 ```
-
 
 ## Inputs
 
 #### `dd-api-key`
 
-API key required to access the Datadog API.
-The environment variable DD_API_KEY can also be used.
-If both are specified, the value specified below with will be used instead of the environment variable.
-Basically, secret will be used in most cases.
+API key required to access the Datadog API. The environment variable DD_API_KEY
+can also be used. If both are specified, the value specified below with will be
+used instead of the environment variable. Basically, secret will be used in most
+cases.
 
 ```yml
 dd-api-key: aaaabbbbccccddddeeeeffffgggghhhh // NG
-````
+```
 
 ```yml
 dd-api-key: ${{secrets.DD_API_KEY}} // OK
-````
-
+```
